@@ -10,27 +10,33 @@ Features
 * Supports debug logging with `-d`
 * Checks to see if a user is logged in at run time. Can be bypassed with `-b`
 
-Code explanation
-----------------
-* Checks if a user is logged in before proceeding. Prevents config changes while in use.
-* Reads isc dhcp logs at `/config/dhcpdv6.leases`.
-    * Matches the client routers Identity Association for Non-temporary Addresses, (ia-na) with the routers duid. 
-    * Matches the client routers Identity Association for Prefix Delegation, (ia-pd) based on duid with an assigned prefix.
-    * Matches ia-na addresses with ia-pd subnets to determine new routes.
-* Gets all subnets currently configured for prefix delegation.
-* Reads all current IPv6 routes for subnets assigned for prefix delegation.
-* Generates a list of installed routes that have expired from the isc dhcp leases file to be removed.
-* Generates a list of new routes to install.
-* Removes unused routes using the Vyatta cli api.
-* Installs new routes using the Vyatta cli api.
-* Exits 
+Setup
+-----
+There is a setup script in this repo `setup.sh`. The command below will download the script and setup the program, including systemd units.
+```
+curl -O https://raw.githubusercontent.com/Jamous/EdgeOS-prefix-delegation/refs/heads/main/setup.sh
+vbash setup.sh
+```
 
-Exit codes
-----------
-* 0: Program completed successfully
-* 1: Program encountered a fatal error, check log at /var/log/messages
-* 2: User was logged in, program terminated
+Running
+-------
+This program is installed at `/bin/dhcpv6-pd`. The following Systemd services are created to run it
+* `dhcpv6-pd.timer`: Launches the program at /bin/dhcpv6-pd
+* `dhcpv6-pd.timer`: Triggers dhcpv6-pd.service every minute
 
+You can check the status of these services with `systemctl status dhcpv6-pd.service` and `systemctl status dhcpv6-pd.timer`. Example output below
+```
+admin@dhcpv6-pd:~$ systemctl status dhcpv6-pd.service
+* dhcpv6-pd.service - EdgeOS prefix delegation. https://github.com/Jamous/EdgeOS-prefix-delegation
+   Loaded: loaded (/etc/systemd/system/dhcpv6-pd.service; static; vendor preset: enabled)
+   Active: inactive (dead) since Tue 2024-12-10 21:02:46 UTC; 20s ago
+  Process: 4905 ExecStart=/bin/dhcpv6-pd -d -b (code=exited, status=0/SUCCESS)
+ Main PID: 4905 (code=exited, status=0/SUCCESS)
+admin@dhcpv6-pd:~$ systemctl status dhcpv6-pd.timer  
+* dhcpv6-pd.timer - Run dhcpv6-pd.service Every Minute
+   Loaded: loaded (/etc/systemd/system/dhcpv6-pd.timer; enabled; vendor preset: enabled)
+   Active: active (waiting) since Tue 2024-12-10 20:21:44 UTC; 41min ago
+```
 
 Configuration
 =============
@@ -134,8 +140,48 @@ set service dhcpv6-server shared-network-name v6pd subnet 2001:db8:1::/48 addres
 set service dhcpv6-server shared-network-name v6pd subnet 2001:db8:1::/48 prefix-delegation start 2001:db8:1:1:: stop 001:db8:1:ffff:: prefix-length 64
 ```
 
+Code explanation
+================
+* Checks if a user is logged in before proceeding. Prevents config changes while in use.
+* Reads isc dhcp logs at `/config/dhcpdv6.leases`.
+    * Matches the client routers Identity Association for Non-temporary Addresses, (ia-na) with the routers duid. 
+    * Matches the client routers Identity Association for Prefix Delegation, (ia-pd) based on duid with an assigned prefix.
+    * Matches ia-na addresses with ia-pd subnets to determine new routes.
+* Gets all subnets currently configured for prefix delegation.
+* Reads all current IPv6 routes for subnets assigned for prefix delegation.
+    * EdgeOS allows selecting a range within a subnet for prefix delegation, this program will only match subnets within that range.
+* Generates a list of installed routes that have expired from the isc dhcp leases file to be removed.
+* Generates a list of new routes to install.
+* Removes unused routes using the Vyatta cli api.
+* Installs new routes using the Vyatta cli api.
+* Exits 
 
-VyOS API example
+Exit codes
+----------
+* 0: Program completed successfully
+* 1: Program encountered a fatal error, check log at /var/log/messages
+* 2: User was logged in, program terminated
+
+VyOS Command Scripting
+======================
+All commands are issued via command scripting. We create a string of commands, then pass them as shell script to vbash.
+
+This code sample uses VyOS Command Scripting to preform these actions:
+* Add a route: 2001:db8:0:2::/64 via 2001:db8::5
+* Remove a route: 2001:db8:0:1::/64
+* Commit changes
+
+```
+#!/bin/vbash
+source /opt/vyatta/etc/functions/script-template
+configure
+set protocols static route6 2001:db8:0:2::/64 next-hop 2001:db8::5
+delete protocols static route6 2001:db8:0:1::/64
+commit
+exit
+exit
+```
+VyOS API
 ==================
 I can not get the API session to start from a script. I will leave this config in here for reference. The API is good for getting config elements from within a go program.
 
@@ -161,26 +207,6 @@ cli-shell-api setupSession
 /opt/vyatta/sbin/my_set protocols static route6 2001:db8:0:2::/64 next-hop 2001:db8::5
 /opt/vyatta/sbin/my_commit
 cli-shell-api teardownSession
-```
-
-VyOS Command Scripting
-======================
-All commands are issued via command scripting. We create a string of commands, then pass them as shell script to vbash.
-
-This code sample uses VyOS Command Scripting to preform these actions:
-* Add a route: 2001:db8:0:2::/64 via 2001:db8::5
-* Remove a route: 2001:db8:0:1::/64
-* Commit changes
-
-```
-#!/bin/vbash
-source /opt/vyatta/etc/functions/script-template
-configure
-set protocols static route6 2001:db8:0:2::/64 next-hop 2001:db8::5
-delete protocols static route6 2001:db8:0:1::/64
-commit
-exit
-exit
 ```
 
 References

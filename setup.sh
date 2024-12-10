@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/vbash
 #Get system architecture
 arch=$(dpkg --print-architecture)
 
 #Download program for archiceture
 echo "Downloading program"
 if [ "$arch" = "mips" ]; then
-    sudo curl -o /bin/dhcpv6-pd https://github.com/Jamous/EdgeOS-prefix-delegation/raw/refs/heads/main/bin/mips64/dhcpv6-pd
+    sudo curl -Lo /bin/dhcpv6-pd https://raw.githubusercontent.com/Jamous/EdgeOS-prefix-delegation/main/bin/mips64/dhcpv6-pd
 elif [ "$arch" = "mipsel" ]; then
-    sudo curl -o /bin/dhcpv6-pd https://github.com/Jamous/EdgeOS-prefix-delegation/raw/refs/heads/main/bin/mips/dhcpv6-pd
+    sudo curl -Lo /bin/dhcpv6-pd https://raw.githubusercontent.com/Jamous/EdgeOS-prefix-delegation/main/bin/mips/dhcpv6-pd
 else
     echo "Unsupported architecture: $arch"
     exit 1
