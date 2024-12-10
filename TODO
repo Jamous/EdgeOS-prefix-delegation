@@ -1,0 +1,3 @@
+Make prefix selection more grainular, only select in the desigated range
+Change get current routes to use new route config
+left off on lin e324, add in new subnets and handle them

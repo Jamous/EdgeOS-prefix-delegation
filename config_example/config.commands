@@ -1,0 +1,84 @@
+set firewall all-ping enable
+set firewall broadcast-ping disable
+set firewall group network-group lan description ''
+set firewall group network-group lan network 192.168.50.0/23
+set firewall ipv6-receive-redirects disable
+set firewall ipv6-src-route disable
+set firewall ip-src-route disable
+set firewall log-martians enable
+set firewall receive-redirects disable
+set firewall send-redirects enable
+set firewall source-validation disable
+set firewall syn-cookies enable
+set interfaces ethernet eth0 address dhcp
+set interfaces ethernet eth0 address '2001:db8::2/64'
+set interfaces ethernet eth0 duplex auto
+set interfaces ethernet eth0 speed auto
+set interfaces ethernet eth1 duplex auto
+set interfaces ethernet eth1 speed auto
+set interfaces ethernet eth2 duplex auto
+set interfaces ethernet eth2 speed auto
+set interfaces ethernet eth3 duplex auto
+set interfaces ethernet eth3 speed auto
+set interfaces ethernet eth4 duplex auto
+set interfaces ethernet eth4 poe output off
+set interfaces ethernet eth4 speed auto
+set interfaces loopback lo
+set interfaces switch switch0 address 192.168.50.1/23
+set interfaces switch switch0 address '2001:db8:1::0/64'
+set interfaces switch switch0 ipv6 dup-addr-detect-transmits 1
+set interfaces switch switch0 ipv6 router-advert cur-hop-limit 64
+set interfaces switch switch0 ipv6 router-advert link-mtu 0
+set interfaces switch switch0 ipv6 router-advert managed-flag true
+set interfaces switch switch0 ipv6 router-advert max-interval 600
+set interfaces switch switch0 ipv6 router-advert other-config-flag false
+set interfaces switch switch0 ipv6 router-advert prefix '2001:db8:1::/64' autonomous-flag false
+set interfaces switch switch0 ipv6 router-advert prefix '2001:db8:1::/64' on-link-flag true
+set interfaces switch switch0 ipv6 router-advert prefix '2001:db8:1::/64' valid-lifetime 2592000
+set interfaces switch switch0 ipv6 router-advert reachable-time 0
+set interfaces switch switch0 ipv6 router-advert retrans-timer 0
+set interfaces switch switch0 ipv6 router-advert send-advert true
+set interfaces switch switch0 mtu 1500
+set interfaces switch switch0 switch-port interface eth1
+set interfaces switch switch0 switch-port interface eth2
+set interfaces switch switch0 switch-port interface eth3
+set interfaces switch switch0 switch-port interface eth4
+set interfaces switch switch0 switch-port vlan-aware disable
+set protocols static route6 '::/0' next-hop '2001:db8::1'
+set service dhcp-server disabled false
+set service dhcp-server hostfile-update disable
+set service dhcp-server shared-network-name dhcp_server authoritative disable
+set service dhcp-server shared-network-name dhcp_server subnet 192.168.50.0/23 default-router 192.168.50.1
+set service dhcp-server shared-network-name dhcp_server subnet 192.168.50.0/23 dns-server 8.8.8.8
+set service dhcp-server shared-network-name dhcp_server subnet 192.168.50.0/23 lease 86400
+set service dhcp-server shared-network-name dhcp_server subnet 192.168.50.0/23 start 192.168.50.10 stop 192.168.51.254
+set service dhcp-server static-arp disable
+set service dhcp-server use-dnsmasq disable
+set service dhcpv6-server shared-network-name v6pd subnet '2001:db8:1::/48' address-range prefix '2001:db8:1::/64'
+set service dhcpv6-server shared-network-name v6pd subnet '2001:db8:1::/48' prefix-delegation start '2001:db8:1:1::' stop '2001:db8:1:ffff::' prefix-length 64
+set service gui http-port 80
+set service gui https-port 443
+set service gui older-ciphers enable
+set service nat rule 5001 description nat_all
+set service nat rule 5001 log disable
+set service nat rule 5001 outbound-interface eth0
+set service nat rule 5001 type masquerade
+set service ssh port 22
+set service ssh protocol-version v2
+set system analytics-handler send-analytics-report false
+set system crash-handler send-crash-report false
+set system host-name dhcpv6-pd
+set system login user admin authentication encrypted-password '$5$89rtgeo15UzHntOe$b4Gz1Cin6uv2hdrXHS9Tlj3Ly4jqO6QBPddjj4IyTq5'
+set system login user admin authentication plaintext-password ''
+set system login user admin authentication public-keys key key AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAwz+pRHPq2Ro+XzTfOu43YtuNxU3RDLWICU+LEBynr5BMGH1tt/ti1vOpZg1eNfotZMwoWPjWmnu8H98FkYbqA=
+set system login user admin authentication public-keys key type ecdsa-sha2-nistp256
+set system login user admin level admin
+set system name-server 8.8.8.8
+set system ntp server 0.ubnt.pool.ntp.org
+set system ntp server 1.ubnt.pool.ntp.org
+set system ntp server 2.ubnt.pool.ntp.org
+set system ntp server 3.ubnt.pool.ntp.org
+set system offload hwnat enable
+set system syslog global facility all level notice
+set system syslog global facility protocols level debug
+set system time-zone UTC
