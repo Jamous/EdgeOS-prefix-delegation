@@ -162,6 +162,33 @@ Exit codes
 * 1: Program encountered a fatal error, check log at /var/log/messages
 * 2: User was logged in, program terminated
 
+Debugging
+=========
+This program uses the system logging utility. Logs are stored at `/var/log/messages`. You can quickly see all related logs with `tail /var/log/messages | grep dhcpv6-pd`. This program has two command line switches
+* `-b` Bypass check to see if a user is active on the router.
+* `-d` Enable debug logs
+
+You can manually run the program with debug logging and ignoring user logged in like this `/bin/dhcpv6-pd -b -d`.
+
+To pass either of these commands at rutime, edit `/etc/systemd/system/dhcpv6-pd.service`. Ex.
+```
+[Unit]
+Description=EdgeOS prefix delegation. https://github.com/Jamous/EdgeOS-prefix-delegation
+
+[Service]
+ExecStart=/bin/dhcpv6-pd -b -d
+Type=oneshot
+```
+
+Then reload systemctl and restart the service. Dont forget, this will run until you revert the changes. Running setup.sh will overwrite any changes.
+
+```
+sudo systemctl daemon-reload
+sudo systemctl restart dhcpv6-pd.service
+```
+
+
+
 VyOS Command Scripting
 ======================
 All commands are issued via command scripting. We create a string of commands, then pass them as shell script to vbash.
