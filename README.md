@@ -24,7 +24,7 @@ This program is installed at `/bin/dhcpv6-pd`. The following Systemd services ar
 * `dhcpv6-pd.timer`: Launches the program at /bin/dhcpv6-pd
 * `dhcpv6-pd.timer`: Triggers dhcpv6-pd.service every minute
 
-You can check the status of these services with `systemctl status dhcpv6-pd.service` and `systemctl status dhcpv6-pd.timer`. Example output below
+You can check the status of these services with `systemctl status dhcpv6-pd.service` and `systemctl status dhcpv6-pd.timer`. Example output below.
 ```
 admin@dhcpv6-pd:~$ systemctl status dhcpv6-pd.service
 * dhcpv6-pd.service - EdgeOS prefix delegation. https://github.com/Jamous/EdgeOS-prefix-delegation

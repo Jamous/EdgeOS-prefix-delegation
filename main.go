@@ -28,9 +28,6 @@ type pdnet struct {
 
 // Main function
 func main() {
-	//Set standard exitcode.
-	exitCode := 0
-
 	// Setup logger, log to syslog at /var/log/messages. Program name is dhcpv6-pd
 	sysLogger := setupLogger()
 	defer sysLogger.Close()
@@ -41,9 +38,6 @@ func main() {
 		if r := recover(); r != nil {
 			logger.Printf("dhcpv6-pd failed with an error: %s", r)
 		}
-
-		//Custom exit code. 0 for okay, 1 for fatal, 2 for user logged in.
-		os.Exit(exitCode)
 	}()
 
 	// Parse user input
@@ -82,7 +76,6 @@ func main() {
 	} else {
 		//Create debug log
 		createLogs("User is logged in, terminating program.", true)
-		exitCode = 2
 	}
 }
 
