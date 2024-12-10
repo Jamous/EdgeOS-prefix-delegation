@@ -156,12 +156,6 @@ Code explanation
 * Installs new routes using the Vyatta cli api.
 * Exits 
 
-Exit codes
-----------
-* 0: Program completed successfully
-* 1: Program encountered a fatal error, check log at /var/log/messages
-* 2: User was logged in, program terminated
-
 Debugging
 =========
 This program uses the system logging utility. Logs are stored at `/var/log/messages`. You can quickly see all related logs with `tail /var/log/messages | grep dhcpv6-pd`. This program has two command line switches
