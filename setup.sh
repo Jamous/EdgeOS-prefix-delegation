@@ -35,7 +35,7 @@ Description=Run dhcpv6-pd.service Every Minute
 
 [Timer]
 OnCalendar=*:0/1
-Persistent=true
+Unit=dhcpv6-pd.service
 
 [Install]
 WantedBy=timers.target"
@@ -52,3 +52,5 @@ echo "Starting and enabling dhcpv6-pd.timer"
 sudo systemctl enable --now dhcpv6-pd.timer | { echo "Failed to enable and start timer"; exit 1; }
 
 systemctl status dhcpv6-pd.timer
+
+echo "Install complete. Sometimes the dhcpv6 will not start correctly. Restart the router to solve this."

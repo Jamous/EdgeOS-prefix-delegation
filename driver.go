@@ -18,7 +18,7 @@ func getConfig(configPath string) []string {
 	cmd := exec.Command("/bin/vbash", "-c", commands)
 	dconfig, err := cmd.CombinedOutput()
 	if err != nil {
-		createLogs(fmt.Sprintf("getConfig could not get edgeroute config. Error: %s Config: %s", err, commands), false)
+		createLogs(fmt.Sprintf("getConfig could not get edgeroute config. Command: %s Error: %s", configPath, err), false)
 		os.Exit(1)
 	}
 
