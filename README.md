@@ -14,7 +14,7 @@ Setup
 -----
 There is a setup script in this repo `setup.sh`. The command below will download the script and setup the program, including systemd units.
 ```
-curl -O https://raw.githubusercontent.com/Jamous/EdgeOS-prefix-delegation/refs/heads/main/setup.sh
+curl -Ok https://raw.githubusercontent.com/Jamous/EdgeOS-prefix-delegation/refs/heads/main/setup.sh
 vbash setup.sh
 ```
 
