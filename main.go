@@ -442,17 +442,17 @@ func updateEdgerouter(removeRoutes []string, addRoutes map[string]string) {
 
 	//Setup command script. I could not get this to work with the API, the script is just a wrapper around the API.
 	//https://docs.vyos.io/en/latest/automation/command-scripting.html
-	var commands string
+	var commands []string
 
 	//Build commands for removeing routes
 	for _, route := range removeRoutes {
-		commands += fmt.Sprintf("delete protocols static route6 %s\n", route)
+		commands = append(commands, fmt.Sprintf("delete protocols static route6 %s\n", route))
 		updatesNeeded = true
 	}
 
 	//Build commands for installing new routes
 	for subnet, route := range addRoutes {
-		commands += fmt.Sprintf("set protocols static route6 %s next-hop %s\n", subnet, route)
+		commands = append(commands, fmt.Sprintf("set protocols static route6 %s next-hop %s\n", subnet, route))
 		updatesNeeded = true
 	}
 
