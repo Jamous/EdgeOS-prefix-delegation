@@ -185,7 +185,7 @@ sudo systemctl restart dhcpv6-pd.service
 
 VyOS Command Scripting
 ======================
-All commands are issued via command scripting. We create a string of commands, then pass them as shell script to vbash.
+All commands are issued via command scripting.  We create a string of commands, then pass them as shell script to vbash.
 
 This code sample uses VyOS Command Scripting to preform these actions:
 * Add a route: 2001:db8:0:2::/64 via 2001:db8::5
@@ -196,11 +196,11 @@ This code sample uses VyOS Command Scripting to preform these actions:
 #!/bin/vbash
 source /opt/vyatta/etc/functions/script-template
 configure
-set protocols static route6 2001:db8:0:2::/64 next-hop 2001:db8::5
-delete protocols static route6 2001:db8:0:1::/64
-commit
-exit
-exit
+$runcfg set protocols static route6 2001:db8:0:2::/64 next-hop 2001:db8::5
+$runcfg delete protocols static route6 2001:db8:0:1::/64
+$runcfg commit
+$runcfg save
+$runcfg end
 ```
 VyOS API
 ==================
