@@ -53,4 +53,4 @@ sudo systemctl enable --now dhcpv6-pd.timer | { echo "Failed to enable and start
 
 systemctl status dhcpv6-pd.timer
 
-echo "Install complete. Sometimes the dhcpv6 will not start correctly. Restart the router to solve this."
+echo "Install complete. Sometimes the dhcpv6 will not start correctly. Restart the service to solve this, /etc/init.d/dhcpdv6 restart"
