@@ -181,6 +181,8 @@ sudo systemctl daemon-reload
 sudo systemctl restart dhcpv6-pd.service
 ```
 
+Sometimes, after enabeling dhcpv6 in the config it will fail start. You will see this error in the system log ``easeFileParser could not read file /config/dhcpdv6.leases: open /config/dhcpdv6.leases: no such file or directory``. You can manualy restart the system service with ``/etc/init.d/dhcpdv6 restart``
+
 
 
 VyOS Command Scripting

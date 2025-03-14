@@ -17,7 +17,7 @@ import (
 // evil global variables
 var debugFlag bool
 var logger *log.Logger
-var version string = "0.1"
+var version string = "0.1.1"
 
 // Struct to hold subnet details
 type pdnet struct {
@@ -169,7 +169,7 @@ func leaseFileParser() []string {
 
 	//Check if file was read, if not raise error
 	if err != nil {
-		createLogs(fmt.Sprintf("leaseFileParser could not read file %s: %s", leaseFile, err), false)
+		createLogs(fmt.Sprintf("leaseFileParser could not read file %s: %s. This might be caused by the dhcpv6 service not running corectly. You can restart it with /etc/init.d/dhcpdv6 restart", leaseFile, err), false)
 		os.Exit(1)
 	}
 
