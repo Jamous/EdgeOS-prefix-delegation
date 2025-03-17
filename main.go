@@ -56,25 +56,24 @@ func main() {
 
 		//Get the current DHCHv6-PD leases from /config/dhcpdv6.leases. Return as a chunked list of the log, currentLeases.
 		leaseEntries := leaseFileParser()
-		fmt.Println("leaseEntries", leaseEntries, "\n\n")
+
 		//Parse leaseEntries and find matches between leases. Returns routeList
 		routeList := getCurrentLeases(leaseEntries)
-		fmt.Println("routeList", routeList)
-		/*
-			//Get current ipv6 routes
-			currentRoutes := getCurrentRoutes()
 
-			//Compare routes and leases, get back list of routes to remove
-			removeRoutes, addRoutes := compareRoutes(currentRoutes, routeList)
+		//Get current ipv6 routes
+		currentRoutes := getCurrentRoutes()
 
-			//Issue updates to edgerouter
-			updateEdgerouter(removeRoutes, addRoutes)
+		//Compare routes and leases, get back list of routes to remove
+		removeRoutes, addRoutes := compareRoutes(currentRoutes, routeList)
 
-			//Log changes
-			if len(removeRoutes) > 0 || len(addRoutes) > 0 {
-				logChanges(removeRoutes, addRoutes)
-			}
-		*/
+		//Issue updates to edgerouter
+		updateEdgerouter(removeRoutes, addRoutes)
+
+		//Log changes
+		if len(removeRoutes) > 0 || len(addRoutes) > 0 {
+			logChanges(removeRoutes, addRoutes)
+		}
+
 	} else {
 		//Create debug log
 		createLogs("User is logged in, terminating program.", true)
@@ -164,7 +163,7 @@ func userLoggedIn() bool {
 
 // Reads in lease file, chuncks up leaes and returns as a slice
 func leaseFileParser() []string {
-	leaseFile := "dhcpdv6.leases"
+	leaseFile := "/config/dhcpdv6.leases"
 
 	//Open file, returns pointer
 	leases, err := os.ReadFile(leaseFile)
@@ -217,13 +216,11 @@ func getCurrentLeases(leaseEntries []string) map[string]string {
 	for _, entry := range leaseEntries {
 		//If the entry contains ia-na, find the router ID and router address.
 		if strings.Contains(entry, "ia-na") {
-			//fmt.Printf("String contains ia-na %s\n", entry)
 			iana, iaaddr := findIANA(entry)
 			ianaPairs[iana] = iaaddr
 
 		} else if strings.Contains(entry, "ia-pd") {
 			//If the entry contains ia-pd, find the router ID and IPv6 subnet that was handed out.
-			//fmt.Printf("String contains ia-pd %s\n", entry)
 			iapd, iaprefix := findIAPD(entry)
 			iapdPairs[iapd] = iaprefix
 		}
@@ -253,7 +250,7 @@ func findIANA(entry string) (string, string) {
 	if len(match) < 4 { //Catch out of bounds. Skip if the match is shorther then the lenghth 4, the minimum string size
 		return "", ""
 	}
-	iana := match[1 : len(match)-3]
+	iana := match[7 : len(match)-3]
 
 	//Find the routers WAN address. We will point routes to here. iaaddr
 	patt2 := `iaaddr\s+([^\s{]+)\s*{`
@@ -263,7 +260,7 @@ func findIANA(entry string) (string, string) {
 		return "", ""
 	}
 	iaaddr := match2[7 : len(match2)-2]
-	//fmt.Printf("\n\nfindIANA iana %s iaaddr %s entry %s\n", iana, iaaddr, entry)
+
 	return iana, iaaddr
 }
 
@@ -274,21 +271,19 @@ func findIAPD(entry string) (string, string) {
 	re := regexp.MustCompile(patt)
 	match := re.FindString(entry)
 	if len(match) < 4 { //Catch out of bounds. Skip if the match is shorther then the lenghth 4, the minimum string size
-		fmt.Printf("er1 %d match %s end match, entry %s\n\n", len(match), match, entry)
 		return "", ""
 	}
-	iapd := match[1 : len(match)-3]
+	iapd := match[7 : len(match)-3]
 
 	//Find the IPv6 subnet routed to this router
 	patt2 := `iaprefix\s+([^\s{]+)\s*{`
 	re2 := regexp.MustCompile(patt2)
 	match2 := re2.FindString(entry)
 	if len(match2) < 11 { //Catch out of bounds. Skip if the match is shorther then 9, the minimum string size
-		fmt.Println("er2", match2, entry, "\n")
 		return "", ""
 	}
 	iaprefix := match2[9 : len(match2)-2]
-	//fmt.Printf("\n\nfindIAPD iapd %s iaprefix %s entry %s\n", iapd, iaprefix, entry)
+
 	return iapd, iaprefix
 }
 
